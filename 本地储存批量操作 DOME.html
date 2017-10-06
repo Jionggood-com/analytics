@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>本地储存批量操作 失焦增删</title>
+	<style>
+		.cart_countlabel,
+		.remove_countlabel{display: inline-block;padding: 10px;background: red;color: #fff;margin:10px 0;}
+		.remove_countlabel{background: blue}
+	</style>
+</head>
+<body>
+<input type="text" id="quantity" value="2" poa="1_2" old="2" onblur="changeNum()" onkeyup="check(this.value)" maxlength="4" /><br>
+<div class="cart_countlabel">add test</div> <br>
+<div class="remove_countlabel">remove test</div>
+<ul id="test">
+	<li>Console Data 初始化poa有[0_0, 2_0]</li>
+</ul>
+
+<script>
+	var FuckingTest = {
+		C:{},
+		type: ['cart','buynow'],
+		fuckinglabel: document.getElementsByTagName("body")[0],
+ 		FuckingFilter: ['_countlabel'],
+		init: function(){
+			this.FuckingListener(this.fuckinglabel, "click",
+		        function(t){
+		          return t.classList;
+		        },
+		       	function(e) {
+		         	var classListName = [];
+		          	classListName = this.className.split(' ');
+		           	for(var i=0;i<classListName.length;i++){
+		                for(var j=0;j<FuckingTest.FuckingFilter.length;j++){
+		                  if(classListName[i].indexOf(FuckingTest.FuckingFilter[j]) > -1){
+		                    FuckingTest.HanderClass(this,classListName[i]);
+		                }
+		            }
+		        }
+		    });
+		    this.C.pid = '1234';
+		    this.send();
+		},
+
+		HanderClass: function(obj,classname){
+		    var num = '';
+		    var poa= '';
+   			var _type = classname.split('_');
+   			if(_type[0]=='cart'){
+   				poa = document.getElementById("quantity").getAttribute('poa');
+   				num = document.getElementById("quantity").value;
+   				this.send(_type[0],poa,num);
+   			}
+   			if(_type[0]=='remove'){
+   				var removepoa = ['0_0','1_2'];//remove poa可以1或多个
+   				FuckinglocalStorage.save(FuckinglocalStorage.remove(FuckinglocalStorage.fetch(),removepoa));
+   				show();
+   			}
+		},
+
+		FuckingListener: function(label, eventname, subject, callBack) {
+	      label.addEventListener(eventname,
+	        function(e) {
+	          	var target = e.target || e.srcElement;
+	          	while (target != label) {
+	              	if(subject(target)) {
+	                  	callBack.call(target, e);
+	                  	break;
+	              	}
+	              	target = target.parentNode || target.parentElement;
+	          	}
+	      	});
+	  	},
+
+	  	send:function(type,poa,num){
+	  		var items = FuckinglocalStorage.fetch();
+	  		if(this.type.indexOf(type)>-1){
+              	for(var i=0;i<num;i++){
+               		items.push({
+	                  	id: this.C.pid,
+	                   	poa:poa
+                 	})
+              	}
+            }
+            FuckinglocalStorage.save(items);
+            show();
+	  	}
+	};
+	
+	var STORAGE_FUCKING_KEY = 'FuckingList';
+	var FuckinglocalStorage ={
+	  	fetch(){
+	   		return JSON.parse(window.localStorage.getItem(STORAGE_FUCKING_KEY) || '[]')
+	  	},
+	  	save(items){
+	   		window.localStorage.setItem(STORAGE_FUCKING_KEY, JSON.stringify(items))
+	  	},
+		remove(list,args,num){
+		    var newlist = [];
+		    for(var i = 0;i<list.length;i++){
+		      	for(var j=0;j<args.length;j++){
+		        	if(list[i].poa==args[j]){
+		         		if(typeof(num) != 'undefined'){
+		            		newlist.push(list[i]);
+		          		}
+		              	list.splice(i,1);
+		              	i--;
+		              	j++;
+		          	}
+		      	}
+		    }
+		    if(typeof(num) != 'undefined'){
+		     	newlist.splice(newlist.length-num,num)
+		    }
+		    list.push.apply(list,newlist);
+		    
+		    return list;
+		}
+	};
+
+	//初始化设置
+	var somearr = [{id:'123',poa:'0_0'},{id:'243',poa:'2_0'}];
+	FuckinglocalStorage.save(somearr);
+
+	FuckingTest.init();
+
+
+	function changeNum(){
+		var poa = document.getElementById("quantity").getAttribute('poa');
+		var val = document.getElementById("quantity").value;
+		var old = document.getElementById("quantity").getAttribute('old');
+		
+		var count = 0;
+		if(typeof(FuckinglocalStorage) != 'undefined'){
+			var fuckingitems = FuckinglocalStorage.fetch();
+			for(var i=0;i<fuckingitems.length;i++){
+				if(fuckingitems[i].poa == poa){
+					count++;
+					console.log(0)
+				}
+			}
+			if(val > count){
+				var num = val - count;
+				for(var i=0;i<num;i++){
+	                fuckingitems.push({
+	                  	id: '1234',
+	                  	poa:poa
+	                })
+	                console.log(1)
+	            }
+	            FuckinglocalStorage.save(fuckingitems);
+			}else{
+				var num = count - val;
+				var poa = [];
+				poa.push('1_2');
+				FuckinglocalStorage.save(FuckinglocalStorage.remove(FuckinglocalStorage.fetch(),poa,num));
+			}
+        }
+        show();
+	}
+
+	function check(val){
+		if(!(/(^[0-9]\d*$)/.test(val)) || !val  || val == 0){
+			document.getElementById("quantity").value = 1;
+		}
+	}
+	function show(){
+		var allpoa = '';
+        for(var j=0;j<FuckinglocalStorage.fetch().length;j++){
+        	var _poa = FuckinglocalStorage.fetch()[j].poa;
+        	allpoa += _poa+', '
+        }
+        console.log('0');
+        var node=document.createElement("LI");
+		document.getElementById("test").appendChild(node);
+		document.getElementById('test').lastChild.innerHTML= allpoa;
+	}
+	</script>
+</body>
+</html>
